@@ -2,14 +2,14 @@
 pragma solidity ^0.8.0;
 
 contract HotalRoom{
-    enum Statuses{ Vacant, Occupied };
+    enum Statuses{ Vacant, Occupied }
 
-    Statuses currentStatus;
+    Statuses public currentStatus;
     event Occupy(address _occupant, uint _value);
 
     address payable public owner;
     constructor() {
-         owner = msg.sender;
+         owner = payable(msg.sender);
          currentStatus = Statuses.Vacant;
     }
     modifier checkStatus {
@@ -21,11 +21,11 @@ contract HotalRoom{
        _;
     }
 
-    function book() checkStatus costs(2 ether) payable public {
+    function book() public payable checkStatus costs(2 ether) {
         //Check Price
         currentStatus = Statuses.Occupied;
-        owner.transfer(msg.value);
-
+        (bool sent, bytes memory data)= owner.call{value:msg.value}("");
+        require(true);
         emit Occupy(msg.sender, msg.value);
     }
         
